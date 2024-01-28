@@ -10,17 +10,24 @@ public class Projectile : MonoBehaviour
 
 	private float destroyAfter = 5f;
 	private float aliveFor;
+	private bool hasCollided;
 
 	private void Awake()
 	{
 		rb = GetComponent<Rigidbody>();
 	}
 
+	private void Reset()
+	{
+		aliveFor = 0f;
+		hasCollided = false;
+	}
+
 	public void Shoot(Vector3 dir, float speed)
 	{
 		this.dir = dir;
 		this.speed = speed;
-		aliveFor = 0f;
+		Reset();
 	}
 
 	private void Update()
@@ -34,6 +41,9 @@ public class Projectile : MonoBehaviour
 
 	private void OnCollisionEnter(Collision collision)
 	{
+		if (hasCollided) return;
+		hasCollided = true;
+
 		if (collision.gameObject.TryGetComponent<Enemy>(out var enemy))
 		{
 			enemy.TakeDamage(1);

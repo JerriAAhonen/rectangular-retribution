@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6965284283428555663}
   - component: {fileID: 6962203087102654582}
   - component: {fileID: 2966958826121164108}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PS - EnemyMovement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4841,7 +4841,7 @@ GameObject:
   - component: {fileID: 7032869720003474467}
   - component: {fileID: 7780135183956752455}
   - component: {fileID: 3988257212374417769}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4926,7 +4926,7 @@ GameObject:
   - component: {fileID: 9031434802123801577}
   - component: {fileID: 58530389599395383}
   - component: {fileID: 425691264455487340}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PS - ShootingMuzzleFlash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9815,7 +9815,7 @@ GameObject:
   - component: {fileID: 8024929808584196394}
   - component: {fileID: 591447208994290163}
   - component: {fileID: 5078427332379912372}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Eye - Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9920,7 +9920,7 @@ GameObject:
   - component: {fileID: 7102604595257254800}
   - component: {fileID: 2667994115329692429}
   - component: {fileID: 5609745906564708646}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10008,6 +10008,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 5
   armor: 0.9
+  movementSpeed: 23
+  rotationSpeed: 10
 --- !u!1 &7377804466606690895
 GameObject:
   m_ObjectHideFlags: 0
@@ -10017,7 +10019,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8183375546251596194}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Ref - ShootPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10051,7 +10053,7 @@ GameObject:
   - component: {fileID: 8319183744994959404}
   - component: {fileID: 426293538368046357}
   - component: {fileID: 146713254606539520}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Eye - Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}

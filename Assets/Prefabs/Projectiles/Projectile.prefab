@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7597756152650308865}
   - component: {fileID: 3968158391465820062}
   - component: {fileID: 821179668521796726}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PS - MovementTrail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4842,7 +4842,7 @@ GameObject:
   - component: {fileID: 8751144159545506787}
   - component: {fileID: 4646881058958800066}
   - component: {fileID: 3022505027715708602}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4940,7 +4940,7 @@ GameObject:
   - component: {fileID: 8915231831953704043}
   - component: {fileID: 8358597250318086380}
   - component: {fileID: 7236193773939435359}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
