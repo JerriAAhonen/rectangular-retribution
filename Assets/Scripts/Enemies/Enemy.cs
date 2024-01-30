@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-using UnityEngine.Windows;
 
 public class Enemy : MonoBehaviour
 {
@@ -9,10 +7,19 @@ public class Enemy : MonoBehaviour
 	[SerializeField] private float armor;
 	[SerializeField] private float movementSpeed;
 	[SerializeField] private float rotationSpeed;
+	[SerializeField] private Rigidbody lootExperiencePrefab;
+	[SerializeField] private float xpDropForce;
 
 	private float health;
 	private Transform target;
 	private Rigidbody rb;
+
+	private Action<Enemy> onDeath;
+
+	public void Init(Action<Enemy> onDeath)
+	{
+		this.onDeath = onDeath;
+	}
 
 	private void Awake()
 	{
@@ -45,9 +52,21 @@ public class Enemy : MonoBehaviour
 
 	public void TakeDamage(int damage)
 	{
-		health -= damage * armor;
+		health -= damage - armor;
 
 		if (health <= 0)
-			Destroy(gameObject);
+		{
+			Die();
+		}
+	}
+
+	private void Die()
+	{
+		var lootXp = Instantiate(lootExperiencePrefab);
+		lootXp.MovePosition(transform.position + Vector3.up * 1f);
+		lootXp.AddForce(UnityEngine.Random.insideUnitSphere * xpDropForce);
+
+		onDeath?.Invoke(this);
+		Destroy(gameObject);
 	}
 }

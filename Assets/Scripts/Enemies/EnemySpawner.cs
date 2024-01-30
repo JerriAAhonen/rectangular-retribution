@@ -1,51 +1,90 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
+	/// <summary>
+	/// Wave duration in seconds
+	/// </summary>
+	public const float WaveDuration = 60f;
+
 	[SerializeField] private Enemy enemyPrefab;
+	[SerializeField] private int enemiesPerWave;
+	[SerializeField] private int enemiesPerWaveIncreasePerWave;
 	[SerializeField] private float spawnAreaDepth;
 	[SerializeField] private float spawnAreaOffset;
+	[Space]
+	[SerializeField] private bool debug_Enable;
 
 	private Vector3 cameraBotLeftCorner; // (0,0)
 	private Vector3 cameraTopRightCorner;// (1,1)
 	private Vector3 cameraTopLeftCorner; // (0,1)
 	private Vector3 cameraBotRightCorner;// (1,0)
 
-	private Vector3 botLeftOffset;
-	private Vector3 botRightOffset;
-	private Vector3 topLeftOffset;
-	private Vector3 topRightOffset;
-
 	private Vector3 origin;
-	private SpawnArea spawnArea;
+	private SpawnArea spawnArea_outside;
 
-	private Vector3 randomizedPosition;
+	private readonly HashSet<Enemy> spawnedEnemies = new();
+	private CountdownTimer waveTimer;
+	private DebugElement_Label debugElement_waveTimer;
+	private DebugElement_Label debugElement_waveNumber;
 
+	private int curWave;
+	private int curEnemiesPerWave;
 
 	private void Start()
+	{
+		InitializeSpawnArea();
+
+		waveTimer = new(WaveDuration);
+		waveTimer.OnTimerStop += SpawnWave;
+		waveTimer.Start();
+
+		curWave = -1;
+		curEnemiesPerWave = enemiesPerWave - enemiesPerWaveIncreasePerWave;
+
+		SpawnWave();
+		InitializeDebugElements();
+	}
+
+	private void Update()
+	{
+		waveTimer.Tick(Time.deltaTime);
+		debugElement_waveTimer.SetText($"Next wave in: {waveTimer.Time}s");
+	}
+
+	private void InitializeDebugElements()
+	{
+		debugElement_waveTimer = new($"Next wave in: {waveTimer.Time}s");
+		debugElement_waveNumber = new($"Current Wave: {curWave}");
+
+		DebugMenu.Instance.RegisterDebugElement(new DebugElement_Space());
+		DebugMenu.Instance.RegisterDebugElement(debugElement_waveTimer);
+		DebugMenu.Instance.RegisterDebugElement(debugElement_waveNumber);
+		DebugMenu.Instance.RegisterDebugElement(new DebugElement_Button("Spawn Wave", SpawnWave));
+	}
+
+	private void InitializeSpawnArea()
 	{
 		cameraBotLeftCorner = CameraUtil.GetPositionOnCameraEdge(Camera.main, Vector2Int.zero).With(y: 0f);
 		cameraTopRightCorner = CameraUtil.GetPositionOnCameraEdge(Camera.main, Vector2Int.one).With(y: 0f);
 		cameraTopLeftCorner = new Vector3(cameraBotLeftCorner.x, cameraBotLeftCorner.y, cameraTopRightCorner.z).With(y: 0f);
 		cameraBotRightCorner = new Vector3(cameraTopRightCorner.x, cameraTopRightCorner.y, cameraBotLeftCorner.z).With(y: 0f);
 
-		botLeftOffset = cameraBotLeftCorner - transform.position.With(y: 0f);
-		botRightOffset = cameraBotRightCorner - transform.position.With(y: 0f);
-		topLeftOffset = cameraTopLeftCorner - transform.position.With(y: 0f);
-		topRightOffset = cameraTopRightCorner - transform.position.With(y: 0f);
+		var botLeftOffset = cameraBotLeftCorner - transform.position.With(y: 0f);
+		var botRightOffset = cameraBotRightCorner - transform.position.With(y: 0f);
+		var topLeftOffset = cameraTopLeftCorner - transform.position.With(y: 0f);
+		var topRightOffset = cameraTopRightCorner - transform.position.With(y: 0f);
 
 		origin = transform.position.With(y: 0f);
 
-		spawnArea = new(
+		spawnArea_outside = new(
 			cameraBotLeftCorner + (botLeftOffset).normalized * spawnAreaOffset,
 			cameraTopLeftCorner + (topLeftOffset).normalized * spawnAreaOffset,
 			cameraTopRightCorner + (topRightOffset).normalized * spawnAreaOffset,
 			cameraBotRightCorner + (botRightOffset).normalized * spawnAreaOffset,
 			spawnAreaDepth);
-
-		randomizedPosition = spawnArea.GetRandomPosition();
-
-		DebugMenu.Instance.RegisterDebugElement(new DebugElement_Button("Spawn Wave", SpawnWave));
 	}
 
 	/// <summary>
@@ -56,26 +95,42 @@ public class EnemySpawner : MonoBehaviour
 	/// </summary>
 	private void SpawnWave()
 	{
-		var enemy = Instantiate(enemyPrefab);
-		enemy.transform.position = spawnArea.GetRandomPosition();
+		curWave++;
+		curEnemiesPerWave += enemiesPerWaveIncreasePerWave;
+		StartCoroutine(Routine());
 
-		enemy = Instantiate(enemyPrefab);
-		enemy.transform.position = spawnArea.GetRandomPosition();
+		debugElement_waveNumber?.SetText($"Current Wave: {curWave}");
 
-		enemy = Instantiate(enemyPrefab);
-		enemy.transform.position = spawnArea.GetRandomPosition();
+		IEnumerator Routine()
+		{
+			for (int i = 0; i < curEnemiesPerWave; i++)
+			{
+				var enemy = Instantiate(enemyPrefab);
+				enemy.transform.position = spawnArea_outside.GetRandomPosition() + GetOffsetToOrigin();
+				enemy.Init(OnEnemyDied);
+				spawnedEnemies.Add(enemy);
 
-		enemy = Instantiate(enemyPrefab);
-		enemy.transform.position = spawnArea.GetRandomPosition();
+				yield return null;
+			}
+
+			waveTimer.Start();
+		}
 	}
 
 	private void OnDrawGizmos()
 	{
-		spawnArea?.DrawGizmos();
-
-		Gizmos.color = Color.red;
-		Gizmos.DrawSphere(randomizedPosition, 0.2f);
+		if (!debug_Enable) return;
+		spawnArea_outside?.DrawGizmos(GetOffsetToOrigin());
 	}
+
+	private void OnEnemyDied(Enemy enemy)
+	{
+		spawnedEnemies.Remove(enemy);
+		if (spawnedEnemies.Count == 0)
+			SpawnWave();
+	}
+
+	private Vector3 GetOffsetToOrigin() => transform.position.With(y: 0f) - origin;
 }
 
 public class SpawnArea
@@ -144,12 +199,12 @@ public class SpawnArea
 		};
 	}
 
-	public void DrawGizmos()
+	public void DrawGizmos(Vector3 offsetToOrigin)
 	{
-		left.DrawGizmos();
-		top.DrawGizmos();
-		right.DrawGizmos();
-		bot.DrawGizmos();
+		left.DrawGizmos(offsetToOrigin);
+		top.DrawGizmos(offsetToOrigin);
+		right.DrawGizmos(offsetToOrigin);
+		bot.DrawGizmos(offsetToOrigin);
 	}
 }
 
@@ -178,10 +233,10 @@ public class SpawnSquare
 		return center + randomPoint;
 	}
 
-	public void DrawGizmos()
+	public void DrawGizmos(Vector3 offsetToOrigin)
 	{
 		Gizmos.color = Color.yellow;
-		Gizmos.DrawSphere(center, 0.2f);
-		Gizmos.DrawWireCube(center, size);
+		Gizmos.DrawSphere(center + offsetToOrigin, 0.2f);
+		Gizmos.DrawWireCube(center + offsetToOrigin, size);
 	}
 }
