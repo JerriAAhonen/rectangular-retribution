@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerExperience : MonoBehaviour
 {
 	[SerializeField] private LayerMask lootLayer;
-	[SerializeField] private UI_ExperienceView temp;
 
 	private PlayerController pc;
 	private int maxXp = 50;
@@ -28,7 +27,6 @@ public class PlayerExperience : MonoBehaviour
 	public void AddXp(int amount)
 	{
 		xp += amount;
-		Debug.Log($"Pickup {amount} xp, total: {xp}");
-		temp.SetFill(xp / (float)maxXp);
+		UI_CoreController.Instance.ExperienceView.SetFill(xp / (float)maxXp);
 	}
 }

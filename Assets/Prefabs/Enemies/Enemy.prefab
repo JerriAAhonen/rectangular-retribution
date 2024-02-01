@@ -10010,9 +10010,9 @@ MonoBehaviour:
   armor: 0
   movementSpeed: 35
   rotationSpeed: 10
-  lootExperiencePrefab: {fileID: 5716006368099021598, guid: d214ff6f97520064e9f0056254e56466,
+  lootExperiencePrefab: {fileID: 659100219816367950, guid: d214ff6f97520064e9f0056254e56466,
     type: 3}
-  xpDropForce: 5
+  experienceDropForce: 2
 --- !u!1 &7377804466606690895
 GameObject:
   m_ObjectHideFlags: 0

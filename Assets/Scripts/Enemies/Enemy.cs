@@ -7,8 +7,8 @@ public class Enemy : MonoBehaviour
 	[SerializeField] private float armor;
 	[SerializeField] private float movementSpeed;
 	[SerializeField] private float rotationSpeed;
-	[SerializeField] private Rigidbody lootExperiencePrefab;
-	[SerializeField] private float xpDropForce;
+	[SerializeField] private Loot lootExperiencePrefab;
+	[SerializeField] private float experienceDropForce;
 
 	private float health;
 	private Transform target;
@@ -62,9 +62,8 @@ public class Enemy : MonoBehaviour
 
 	private void Die()
 	{
-		var lootXp = Instantiate(lootExperiencePrefab);
-		lootXp.MovePosition(transform.position + Vector3.up * 1f);
-		lootXp.AddForce(UnityEngine.Random.insideUnitSphere * xpDropForce);
+		var lootXp = Instantiate(lootExperiencePrefab, transform.position + Vector3.up * 1f, UnityEngine.Random.rotation);
+		lootXp.Init(UnityEngine.Random.insideUnitSphere * experienceDropForce);
 
 		onDeath?.Invoke(this);
 		Destroy(gameObject);
