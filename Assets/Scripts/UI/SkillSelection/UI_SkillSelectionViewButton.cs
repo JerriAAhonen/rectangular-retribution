@@ -13,14 +13,11 @@ public class UI_SkillSelectionViewButton : MonoBehaviour
 
     public event Action<int> Clicked;
 
-	private void Awake()
-	{
-		button = GetComponent<Button>();
-		transform.localScale = Vector3.zero;
-	}
-
 	public void Init(int index)
     {
+		transform.localScale = Vector3.zero;
+
+		button = GetComponent<Button>();
 		button.onClick.AddListener(() => Clicked?.Invoke(index));
 
 		label.text = $"Skill {index}";
