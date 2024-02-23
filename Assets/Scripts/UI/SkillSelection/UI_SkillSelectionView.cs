@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,23 +9,39 @@ public class UI_SkillSelectionView : MonoBehaviour
 	private UI_SkillSelectionController controller;
 	private List<UI_SkillSelectionViewButton> buttons;
 
+	
+
 	private void Awake()
 	{
 		buttons = new(GetComponentsInChildren<UI_SkillSelectionViewButton>());
 
-		int index = 0;
-		foreach (var button in buttons)
+		for (int i = 0; i < buttons.Count; i++)
 		{
-			Debug.Log("SkillSelection set listener	");
-			button.Init(index);
-			button.Clicked += OnSkill;
-			index++;
+			//Debug.Log("SkillSelection set listener");
+			buttons[i].Init(i);
+			buttons[i].Clicked += OnSkill;
+		}
+	}
+
+	private void Update()
+	{
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+			OnSkill(0);
+        }
+		else if (Input.GetKeyDown(KeyCode.Alpha2))
+		{
+			OnSkill(1);
+		}
+		else if (Input.GetKeyDown(KeyCode.Alpha3))
+		{
+			OnSkill(2);
 		}
 	}
 
 	public void Init(UI_SkillSelectionController controller)
 	{
-		Debug.Log("SkillSelection init");
+		//Debug.Log("SkillSelection init");
 		this.controller = controller;
 	}
 

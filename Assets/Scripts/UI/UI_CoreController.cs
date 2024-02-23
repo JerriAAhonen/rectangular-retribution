@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UI_CoreController : Singleton<UI_CoreController>
 {
-	[SerializeField] private UI_ExperienceView experienceView;
+	[SerializeField] private UI_SkillSelectionController skillSelection;
 
-	public UI_ExperienceView ExperienceView => experienceView;
+	public UI_SkillSelectionController SkillSelection => skillSelection;
 }

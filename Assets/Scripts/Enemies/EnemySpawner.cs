@@ -26,6 +26,7 @@ public class EnemySpawner : MonoBehaviour
 
 	private DebugElement_Label debugElement_waveTimer;
 	private DebugElement_Label debugElement_waveNumber;
+	private DebugElement_Label debugElement_doSpawnInfo;
 
 	private int curWave;
 	private int curEnemiesPerWave;
@@ -48,6 +49,8 @@ public class EnemySpawner : MonoBehaviour
 
 	private void Update()
 	{
+		if (!doSpawn) return;
+
 		waveTimer.Tick(Time.deltaTime);
 		debugElement_waveTimer.SetText($"Next wave in: {waveTimer.Time}s");
 	}
@@ -63,23 +66,21 @@ public class EnemySpawner : MonoBehaviour
 	{
 		debugElement_waveTimer = new($"Next wave in: {waveTimer.Time}s");
 		debugElement_waveNumber = new($"Current Wave: {curWave}");
+		debugElement_doSpawnInfo = new($"Do Spawn: {doSpawn}");
 
 		DebugMenu.Instance.RegisterDebugElement(new DebugElement_Space());
 		DebugMenu.Instance.RegisterDebugElement(debugElement_waveTimer);
 		DebugMenu.Instance.RegisterDebugElement(debugElement_waveNumber);
 		DebugMenu.Instance.RegisterDebugElement(new DebugElement_Button("Spawn Wave", SpawnWave));
 		DebugMenu.Instance.RegisterDebugElement(new DebugElement_Button("Clear enemies", ClearEnemies));
+		DebugMenu.Instance.RegisterDebugElement(debugElement_doSpawnInfo);
 		DebugMenu.Instance.RegisterDebugElement(new DebugElement_Button("Toggle spawning", ToggleDoSpawn)); // TODO Display if spawning is on or off
 	}
 
-	/// <summary>
-	/// - Find corners of the camera view
-	/// - Add a little padding so you dont see them spawning in
-	/// - randomize position along the edges of the screen
-	/// - assert that enemies are evenly spread (atleast for a basic wave)
-	/// </summary>
 	private void SpawnWave()
 	{
+		if (!doSpawn) return;
+
 		curWave++;
 		curEnemiesPerWave += enemiesPerWaveIncreasePerWave;
 		StartCoroutine(Routine());
@@ -91,7 +92,14 @@ public class EnemySpawner : MonoBehaviour
 			for (int i = 0; i < curEnemiesPerWave; i++)
 			{
 				var enemy = Instantiate(enemyPrefab);
-				enemy.transform.position = spawnArea.GetRandomPosition() + GetOffsetToOrigin();
+				
+				Vector3 spawnPos;
+				do
+				{
+					spawnPos = spawnArea.GetRandomPosition() + GetOffsetToOrigin();
+				} while (!IsSpawnPointValid(spawnPos));
+
+				enemy.transform.position = spawnPos;
 				enemy.Init(OnEnemyDied);
 				spawnedEnemies.Add(enemy);
 
@@ -100,6 +108,17 @@ public class EnemySpawner : MonoBehaviour
 
 			waveTimer.Start();
 		}
+	}
+
+	private bool IsSpawnPointValid(Vector3 pos)
+	{
+		var raycastFrom = pos + Vector3.up;
+		var raycastTo = (pos - raycastFrom).normalized;
+		if (Physics.Raycast(raycastFrom, raycastTo, out var hit, 2f))
+		{
+			return true;
+		}
+		return false;
 	}
 
 	private void ClearEnemies()
@@ -112,7 +131,11 @@ public class EnemySpawner : MonoBehaviour
 		}
 	}
 
-	private void ToggleDoSpawn() => doSpawn = !doSpawn;
+	private void ToggleDoSpawn()
+	{
+		doSpawn = !doSpawn;
+		debugElement_doSpawnInfo.SetText($"Do Spawn: {doSpawn}");
+	}
 
 	private void OnDrawGizmos()
 	{

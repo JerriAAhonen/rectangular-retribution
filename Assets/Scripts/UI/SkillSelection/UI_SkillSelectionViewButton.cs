@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class UI_SkillSelectionViewButton : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI label;
+    [SerializeField] private TextMeshProUGUI keycodeTooltip;
 
     private Button button;
 
@@ -21,6 +22,7 @@ public class UI_SkillSelectionViewButton : MonoBehaviour
 		button.onClick.AddListener(() => Clicked?.Invoke(index));
 
 		label.text = $"Skill {index}";
+		keycodeTooltip.text = $"{index + 1}";
     }
 
 	public void Appear()

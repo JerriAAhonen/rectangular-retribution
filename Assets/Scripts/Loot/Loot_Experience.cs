@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class Loot_Experience : Loot
 {
-	public override void OnPickup()
+	protected override void OnDestroyLoot()
 	{
 		LevelController.Instance.PlayerController.Experience.AddXp(1);
-		Destroy(gameObject);
 	}
 }

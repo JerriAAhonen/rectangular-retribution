@@ -19,7 +19,8 @@ public class SpawnArea_Circle : ISpawnArea
 	public Vector3 GetRandomPosition()
 	{
 		var randDistance = Random.Range(innerRadius, outerRadius);
-		var randDir = Random.insideUnitCircle * randDistance;
+		var randUnitCircle = Random.insideUnitCircle.normalized;
+		var randDir = randUnitCircle * randDistance;
 		return new Vector3(randDir.x, 0f, randDir.y);
 	}
 

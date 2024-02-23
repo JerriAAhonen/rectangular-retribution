@@ -1,10 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UI_SkillSelectionController : Singleton<UI_SkillSelectionController>
+public class UI_SkillSelectionController : MonoBehaviour
 {
 	[SerializeField] private UI_SkillSelectionView view;
+
+	private Action onClose;
 
 	private void Start()
 	{
@@ -15,12 +18,20 @@ public class UI_SkillSelectionController : Singleton<UI_SkillSelectionController
 	{
 		if (Input.GetKeyUp(KeyCode.L))
 		{
-			view.Open();
+			Open(null);
 		}
+	}
+
+	public void Open(Action onClose)
+	{
+		this.onClose = onClose;
+		view.Open();
 	}
 
 	public void OnSkillSelected(int index)
 	{
+		onClose?.Invoke();
+		onClose = null;
 		view.Close();
 	}
 

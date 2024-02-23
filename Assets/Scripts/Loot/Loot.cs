@@ -14,5 +14,22 @@ public abstract class Loot : MonoBehaviour
 		rb.AddForce(spawnForceAndDir, ForceMode.Impulse);
 	}
 
-	public abstract void OnPickup();
+	public virtual void OnPickup(Transform player)
+	{
+		StartCoroutine(PickupRoutine(player));
+	}
+
+	private IEnumerator PickupRoutine(Transform target)
+	{
+		while (!transform.position.InRangeOf(target.position, 0.2f))
+		{
+			rb.velocity = (target.position - transform.position).normalized * 4f;
+			yield return null;
+		}
+
+		OnDestroyLoot();
+		Destroy(gameObject);
+	}
+
+	protected abstract void OnDestroyLoot();
 }
