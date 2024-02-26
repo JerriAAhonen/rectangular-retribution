@@ -307,7 +307,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3635158269867088742
 MonoBehaviour:
@@ -323,6 +323,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   label: {fileID: 6626610300450971688}
   keycodeTooltip: {fileID: 2693293660378540565}
+  appearDur: 0.5
+  hideDur: 0.5
+  scaleUpDur: 0.5
+  scaleUpSize: 1.3
+  scaleDownDur: 0.3
 --- !u!222 &2252787120365853343
 CanvasRenderer:
   m_ObjectHideFlags: 0

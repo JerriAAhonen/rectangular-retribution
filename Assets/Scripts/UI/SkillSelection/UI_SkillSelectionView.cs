@@ -9,7 +9,7 @@ public class UI_SkillSelectionView : MonoBehaviour
 	private UI_SkillSelectionController controller;
 	private List<UI_SkillSelectionViewButton> buttons;
 
-	
+	private CanvasGroup cg;
 
 	private void Awake()
 	{
@@ -21,6 +21,9 @@ public class UI_SkillSelectionView : MonoBehaviour
 			buttons[i].Init(i);
 			buttons[i].Clicked += OnSkill;
 		}
+
+		cg = GetComponent<CanvasGroup>();
+		cg.SetVisible(false);
 	}
 
 	private void Update()
@@ -47,28 +50,30 @@ public class UI_SkillSelectionView : MonoBehaviour
 
 	public void Open()
 	{
+		cg.SetVisible(true);
+
 		StartCoroutine(Routine());
 		IEnumerator Routine()
 		{
 			foreach (var button in buttons)
 			{
 				button.Appear();
-				yield return CachedWait.ForSeconds(0.2f);
+				yield return CachedWait.ForSecondsRealtime(0.2f);
 			}
 		}
 	}
 
-	public void Close()
+	public void Close(int selectedIndex)
 	{
-		StartCoroutine(Routine());
-		IEnumerator Routine()
+		float maxDur = 0f;
+		foreach (var button in buttons)
 		{
-			foreach (var button in buttons)
-			{
-				button.Hide();
-				yield return CachedWait.ForSeconds(0.2f);
-			}
+			var closeDur = button.Hide(selectedIndex);
+			if (closeDur > maxDur)
+				maxDur = closeDur;
 		}
+
+		LeanTween.delayedCall(maxDur, () => { cg.SetVisible(false); });
 	}
 
 	private void OnSkill(int index)

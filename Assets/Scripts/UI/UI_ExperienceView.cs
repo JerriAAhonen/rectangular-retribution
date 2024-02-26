@@ -9,7 +9,7 @@ public class UI_ExperienceView : MonoBehaviour
 	[SerializeField] private Image fill;
 	[SerializeField] private TextMeshProUGUI totalXpLabel;
 
-	private EventBinding<PlayerExperienceEvent> playerExperienceBinding;
+	private EventBinding<Event_PlayerGainXp> playerGainXpBinding;
 
 	private void Awake()
 	{
@@ -18,16 +18,16 @@ public class UI_ExperienceView : MonoBehaviour
 
 	private void OnEnable()
 	{
-		playerExperienceBinding = new EventBinding<PlayerExperienceEvent>(HandlePlayerExperienceEvent);
-		EventBus<PlayerExperienceEvent>.Register(playerExperienceBinding);
+		playerGainXpBinding = new EventBinding<Event_PlayerGainXp>(HandlePlayerExperienceEvent);
+		EventBus<Event_PlayerGainXp>.Register(playerGainXpBinding);
 	}
 
 	private void OnDisable()
 	{
-		EventBus<PlayerExperienceEvent>.Deregister(playerExperienceBinding);
+		EventBus<Event_PlayerGainXp>.Deregister(playerGainXpBinding);
 	}
 
-	private void HandlePlayerExperienceEvent(PlayerExperienceEvent playerExperienceEvent)
+	private void HandlePlayerExperienceEvent(Event_PlayerGainXp playerExperienceEvent)
 	{
 		SetFill(playerExperienceEvent.currentLevelXpPercentage);
 		SetTotalXp(playerExperienceEvent.totalXp);

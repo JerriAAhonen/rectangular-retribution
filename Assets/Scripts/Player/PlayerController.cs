@@ -6,9 +6,9 @@ public class PlayerController : MonoBehaviour
 {
 	private PlayerMovement pm;
 	private PlayerShooting ps;
-	private PlayerExperience pe;
+	private PlayerExperienceSystem pe;
 	
-	public PlayerExperience Experience => pe;
+	public PlayerExperienceSystem Experience => pe;
 
 	public bool MovementEnabled { get; private set; }
 	public bool ShootingEnabled { get; private set; }
@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
 		ps = GetComponent<PlayerShooting>();
 		ps.Init(this);
 
-		pe = GetComponent<PlayerExperience>();
+		pe = GetComponent<PlayerExperienceSystem>();
 		pe.Init(this);
 	}
 
