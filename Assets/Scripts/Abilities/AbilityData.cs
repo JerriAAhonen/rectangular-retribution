@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using NaughtyAttributes;
 using UnityEngine;
 
-public interface IAbilityData { }
-
+[CreateAssetMenu]
 public class AbilityData : ScriptableObject
 {
 	[ReadOnly] public int id;
 	public string displayName;
 
-	public List<GameObject> prefabsToAdd;
-	public List<object> bonusesToApply;
+	public List<IAbilityComponent> components;
 }
