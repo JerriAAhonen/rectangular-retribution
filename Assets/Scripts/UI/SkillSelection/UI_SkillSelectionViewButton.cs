@@ -34,6 +34,11 @@ public class UI_SkillSelectionViewButton : MonoBehaviour
 		keycodeTooltip.text = $"{index + 1}";
     }
 
+	public void SetContent(string title)
+	{
+		label.text = title;
+	}
+
 	public void Select()
 	{
 		Clicked?.Invoke(index);

@@ -6,6 +6,8 @@ public class AbilityModel
 {
 	private readonly List<AbilityData> allAbilities;
 
+	private List<AbilityData> activeAbilities = new();
+
 	public int ProjectileCount { get; private set; }
 	public int ProjectileDamageMult { get; private set; }
 	public int ProjectileSpeedMult { get; private set; }
@@ -21,12 +23,18 @@ public class AbilityModel
 		AbilityData randAbilityData;
 		do
 		{
-			var randIndex = Random.Range(0, allAbilities.Count - 1);
+			var randIndex = Random.Range(0, allAbilities.Count);
 			randAbilityData = allAbilities[randIndex];
 
 		} while (exclude.Contains(randAbilityData));
 
 		return randAbilityData;
+	}
+
+	public void OnNewAbilityChosen(AbilityData data)
+	{
+		activeAbilities.Add(data);
+		Debug.Log(data);
 	}
 }
 
@@ -50,22 +58,32 @@ public class AbilityController
 
 	public void OnNewAbilityChosen(AbilityData data)
 	{
-
+		model.OnNewAbilityChosen(data);
 	}
 }
 
-public class AbilitySystem : MonoBehaviour
+public class PlayerAbilitySystem : MonoBehaviour
 {
 	[SerializeField] private AbilityDatabase abilityDatabase;
 
 	private AbilityModel model;
 	private AbilityController controller;
 
+	EventBinding<UIEvent_SkillSelectionClosed> skillSelectionClosed;
+
 	private void Awake()
 	{
 		model = new AbilityModel(abilityDatabase);
 		controller = new AbilityController(model);
+
+		skillSelectionClosed = new EventBinding<UIEvent_SkillSelectionClosed>(OnSkillSelectionClosed);
+		EventBus<UIEvent_SkillSelectionClosed>.Register(skillSelectionClosed);
 	}
 
 	public void GetAbilityChoisesOnLevelUp(int amount, List<AbilityData> result) => controller.GetAbilityChoisesOnLevelUp(amount, result);
+
+	private void OnSkillSelectionClosed(UIEvent_SkillSelectionClosed @event)
+	{
+		controller.OnNewAbilityChosen(@event.chosenAbility);
+	}
 }

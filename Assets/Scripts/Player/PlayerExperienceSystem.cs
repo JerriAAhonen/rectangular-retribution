@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public struct Event_PlayerGainXp : IEvent 
@@ -9,12 +10,14 @@ public struct Event_PlayerGainXp : IEvent
 public struct Event_PlayerLevelUp : IEvent
 {
 	public int newLevel;
+	public List<AbilityData> abilityChoices;
 }
 
 public class PlayerExperienceSystem : MonoBehaviour
 {
 	[SerializeField] private LayerMask lootLayer;
 	[SerializeField] private PlayerExperienceData progression;
+	[SerializeField] private PlayerAbilitySystem abilitySystem;
 
 	private PlayerController pc;
 
@@ -66,15 +69,20 @@ public class PlayerExperienceSystem : MonoBehaviour
 
 		if (isLevelUp)
 		{
+			var abilityChoices = new List<AbilityData>();
+			abilitySystem.GetAbilityChoisesOnLevelUp(3, abilityChoices);
+
 			EventBus<Event_PlayerLevelUp>.Raise(new Event_PlayerLevelUp
 			{
-				newLevel = currentLevelXp
+				newLevel = currentLevelXp,
+				abilityChoices = abilityChoices
 			});
 		}
 	}
 
 	private void InstantLevelUp()
 	{
-		// TODO
+		var requiredXp = progression.XpNeededForLevel(currentLevel);
+		AddXp(requiredXp);
 	}
 }

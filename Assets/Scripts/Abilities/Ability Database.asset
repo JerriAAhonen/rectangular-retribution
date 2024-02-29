@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: AbilityDatabase
-  m_EditorClassIdentifier: Assembly-CSharp::AbilityDatabase
+  m_Script: {fileID: 11500000, guid: 64bc31879ad7ca24086102d95493a11d, type: 3}
+  m_Name: Ability Database
+  m_EditorClassIdentifier: 
   allAbilities:
   - {fileID: 11400000, guid: d3b425f63fe061a4f8949b276f6a8adc, type: 2}
   - {fileID: 11400000, guid: 23e059c1f7cb01a41bcf2b41305a9948, type: 2}

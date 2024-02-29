@@ -48,16 +48,17 @@ public class UI_SkillSelectionView : MonoBehaviour
 		this.controller = controller;
 	}
 
-	public void Open()
+	public void Open(List<AbilityData> abilityChoices)
 	{
 		cg.SetVisible(true);
 
 		StartCoroutine(Routine());
 		IEnumerator Routine()
 		{
-			foreach (var button in buttons)
+			for (int i = 0;i < buttons.Count;i++)
 			{
-				button.Appear();
+				buttons[i].SetContent(abilityChoices[i].displayName);
+				buttons[i].Appear();
 				yield return CachedWait.ForSecondsRealtime(0.2f);
 			}
 		}
