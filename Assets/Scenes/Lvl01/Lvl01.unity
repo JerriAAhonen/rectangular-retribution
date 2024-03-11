@@ -3836,6 +3836,7 @@ GameObject:
   - component: {fileID: 1314611123}
   - component: {fileID: 1314611122}
   - component: {fileID: 1314611129}
+  - component: {fileID: 1314611130}
   - component: {fileID: 1314611126}
   - component: {fileID: 1314611127}
   - component: {fileID: 1314611128}
@@ -3994,6 +3995,20 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   progression: {fileID: 11400000, guid: 6b70837fb8c39e249ab4a3f0022e30e8, type: 2}
+  abilitySystem: {fileID: 1314611130}
+--- !u!114 &1314611130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1314611120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d61fe3efa3143544b9d071cf67cb95d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  abilityDatabase: {fileID: 11400000, guid: cf767a10d9aa10e4fbd65274c14f74d9, type: 2}
 --- !u!1 &1322699840
 GameObject:
   m_ObjectHideFlags: 0

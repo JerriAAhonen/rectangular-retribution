@@ -3,11 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct UIEvent_SkillSelectionClosed : IEvent { }
+public struct UIEvent_SkillSelectionClosed : IEvent 
+{
+	public AbilityData chosenAbility;
+}
 
 public class UI_SkillSelectionController : MonoBehaviour
 {
 	[SerializeField] private UI_SkillSelectionView view;
+
+	private List<AbilityData> abilityChoices;
 
 	private EventBinding<Event_PlayerLevelUp> playerLevelUpBinding;
 
@@ -29,12 +34,14 @@ public class UI_SkillSelectionController : MonoBehaviour
 
 	private void HandlePlayerLevelUp(Event_PlayerLevelUp @event)
 	{
-		Open();
+		Open(@event.abilityChoices);
 	}
 
-	private void Open()
+	private void Open(List<AbilityData> abilityChoices)
 	{
-		view.Open();
+		this.abilityChoices = abilityChoices;
+
+		view.Open(abilityChoices);
 		TimeController.StopTime();
 	}
 
@@ -42,7 +49,10 @@ public class UI_SkillSelectionController : MonoBehaviour
 	{
 		view.Close(index);
 		TimeController.ResumeTime();
-		EventBus<UIEvent_SkillSelectionClosed>.Raise(new UIEvent_SkillSelectionClosed());
+		EventBus<UIEvent_SkillSelectionClosed>.Raise(new UIEvent_SkillSelectionClosed
+		{
+			chosenAbility = abilityChoices[index]
+		});
 	}
 
 	/*
