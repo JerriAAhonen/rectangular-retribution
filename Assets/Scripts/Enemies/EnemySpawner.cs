@@ -31,6 +31,8 @@ public class EnemySpawner : MonoBehaviour
 	private int curWave;
 	private int curEnemiesPerWave;
 
+	public HashSet<Enemy> SpawnedEnemies => spawnedEnemies;
+
 	private void Start()
 	{
 		InitializeSpawnArea();
@@ -89,18 +91,15 @@ public class EnemySpawner : MonoBehaviour
 
 		IEnumerator Routine()
 		{
+			var target = LevelController.Instance.PlayerController.transform;
+
 			for (int i = 0; i < curEnemiesPerWave; i++)
 			{
 				var enemy = Instantiate(enemyPrefab);
-				
-				Vector3 spawnPos;
-				do
-				{
-					spawnPos = spawnArea.GetRandomPosition() + GetOffsetToOrigin();
-				} while (!IsSpawnPointValid(spawnPos));
+				var spawnPos = GetValidSpawnPosition();
 
 				enemy.transform.position = spawnPos;
-				enemy.Init(OnEnemyDied);
+				enemy.Init(target, OnEnemyDied);
 				spawnedEnemies.Add(enemy);
 
 				yield return null;
@@ -108,6 +107,16 @@ public class EnemySpawner : MonoBehaviour
 
 			waveTimer.Start();
 		}
+	}
+
+	private Vector3 GetValidSpawnPosition()
+	{
+		Vector3 spawnPos;
+		do
+		{
+			spawnPos = spawnArea.GetRandomPosition() + GetOffsetToOrigin();
+		} while (!IsSpawnPointValid(spawnPos));
+		return spawnPos;
 	}
 
 	private bool IsSpawnPointValid(Vector3 pos)

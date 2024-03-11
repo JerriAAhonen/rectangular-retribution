@@ -9,6 +9,8 @@ public class PlayerShooting : MonoBehaviour
 	[Header("References")]
 	[SerializeField] private Transform ref_shootPoint;
 	[SerializeField] private ParticleSystem ps_muzzleFlash;
+	[SerializeField] private EnemySpawner enemySpawner;
+	[SerializeField] private RotateTowards playerRotator;
 
 	private PlayerController pc;
 
@@ -21,21 +23,49 @@ public class PlayerShooting : MonoBehaviour
 
 	private void Update()
 	{
+		// Shooting completely disabled
 		if (!pc.ShootingEnabled) return;
-        
-        if (Input.GetMouseButton(0))
+
+		// Not enough time passed between shots
+		if (Time.time - lastShootTime < shootInterval) return;
+
+		var target = FindClosest();
+
+		// No targets on the map
+		if (target == null) return;
+
+		// Turn to face the closest enemy
+		playerRotator.SetTarget(target);
+
+		// Record time of shot
+		lastShootTime = Time.time;
+		
+		var projectile = ProjectilePool.Instance.Pool.Get();
+		projectile.transform.position = ref_shootPoint.position;
+		projectile.transform.rotation = ref_shootPoint.rotation;
+		projectile.Shoot(ref_shootPoint.forward, 10f);
+
+		ps_muzzleFlash.Play();
+	}
+
+	private Transform FindClosest()
+	{
+		var minDist = 1f;
+		var closestDist = float.MaxValue;
+		Enemy closestEnemy = null;
+		foreach (Enemy enemy in enemySpawner.SpawnedEnemies)
 		{
-			if (Time.time - lastShootTime < shootInterval)
-				return;
+			var dist = (enemy.transform.position - transform.position).sqrMagnitude;
+			if (dist < closestDist)
+			{
+				closestDist = dist;
+				closestEnemy = enemy;
+			}
 
-			lastShootTime = Time.time;
-
-			var projectile = ProjectilePool.Instance.Pool.Get();
-			projectile.transform.position = ref_shootPoint.position;
-			projectile.transform.rotation = ref_shootPoint.rotation;
-			projectile.Shoot(ref_shootPoint.forward, 10f);
-
-			ps_muzzleFlash.Play();
+			if (dist <= minDist)
+				return enemy.transform;
 		}
+
+		return closestEnemy.transform;
 	}
 }

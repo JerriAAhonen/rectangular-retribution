@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
@@ -13,26 +14,33 @@ public class Enemy : MonoBehaviour
 	private float health;
 	private Transform target;
 	private Rigidbody rb;
+	private NavMeshAgent navMeshAgent;
+	private int randFrameToUpdateDestinationOn;
 
 	private Action<Enemy> onDeath;
 
-	public void Init(Action<Enemy> onDeath)
+	public void Init(Transform target, Action<Enemy> onDeath)
 	{
+		this.target = target;
 		this.onDeath = onDeath;
-	}
 
-	private void Awake()
-	{
 		health = maxHealth;
 		rb = GetComponent<Rigidbody>();
-	}
+		navMeshAgent = GetComponent<NavMeshAgent>();
 
-	private void Start()
+		randFrameToUpdateDestinationOn = UnityEngine.Random.Range(1, 31);
+
+    }
+
+	private void Update()
 	{
-		target = LevelController.Instance.PlayerController.transform;
+		if (Time.frameCount % randFrameToUpdateDestinationOn == 0)
+		{
+			navMeshAgent.SetDestination(target.position);
+		}
 	}
 
-	private void FixedUpdate()
+	/*private void FixedUpdate()
 	{
 		if (target)
 		{
@@ -40,7 +48,7 @@ public class Enemy : MonoBehaviour
 			rb.velocity = movementSpeed * Time.fixedDeltaTime * dir;
 			transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), rotationSpeed * Time.deltaTime);
 		}
-	}
+	}*/
 
 	private void OnCollisionEnter(Collision collision)
 	{
